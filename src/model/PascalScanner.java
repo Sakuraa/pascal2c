@@ -3,7 +3,6 @@ package model;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -11,17 +10,15 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 
-
 public class PascalScanner {
 	private String file_name;
 	private ArrayList<Map.Entry<Token, String>> tokens;
 	public PascalScanner(String file_name) {
-		// TODO Auto-generated constructor stub
 		this.file_name = file_name;
 	}
 	public enum Token {
 		KEYWORD, BEGIN, END, PROGRAM,
-		LEFTBRACKET, RIGHTBRACKET, LEFTBRACKET2, RIGHTBRACKET2,  LEFTBRACKET3, RIGHTBRACKET3, 
+		LEFTBRACKET, RIGHTBRACKET, LEFTBRACKET2, RIGHTBRACKET2,
 		ARYTMETIC, 
 		OPERATOR,
 		NUMBER, 
@@ -66,6 +63,126 @@ public class PascalScanner {
 			  case '\r':
 				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.WHITESPACE, "\r"));
 				  break;
+			  case '(':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.LEFTBRACKET, "("));
+				  break;
+			  case ')':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.RIGHTBRACKET, ")"));
+				  break;
+			  case '[':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.LEFTBRACKET2, "["));
+				  break;
+			  case ']':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.RIGHTBRACKET2, "]"));
+				  break;
+			  case '+':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ARYTMETIC, "+"));
+				  break;
+			  case '-':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ARYTMETIC, "-"));
+				  break;
+			  case '%':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ARYTMETIC, "%"));
+				  break;
+			  case '?':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.OPERATOR, "?"));
+				  break;
+			  case '!':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.OPERATOR, "!"));
+				  break;
+			  case '&':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.OPERATOR, "&"));
+				  break;
+			  case '|':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.OPERATOR, "|"));
+				  break;
+			  case '<':
+				  reader.mark(1);
+				  character = (char) reader.read();
+				  if(character =='='){
+					  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.LESS_THEN_OR_EQUAL,"<="));
+					  break;
+				  }
+				  else {
+					  reader.reset();
+					  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.LESS_THEN,"<"));
+					  break;
+				  }
+			  case '>':
+				  character = (char) reader.read();
+				  if(character =='='){
+					  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.GREATER_THEN_OR_EQUAL,">="));
+					  break;
+				  }
+				  else {
+					  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.GREATER_THEN,">"));
+					  break;
+				  }
+			  case '{':
+				  buffor+=character;
+				  character = (char)reader.read();
+				  while(character!='}'){
+					  buffor+=character;
+					  character=(char)reader.read();
+				  }
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.COMMENT, buffor));
+				   break;
+			  case ';':
+				  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.SEMICOLON,";"));
+				  break;
+			  case '.':
+				  tokens.add(new AbstractMap.SimpleEntry<Token,String>(Token.DOT,"."));
+				  break;
+			  case ',':
+				  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.COMA, ","));
+				  break;
+			  case ':':
+				  reader.mark(1);
+				  character = (char) reader.read();
+				  if(character=='='){
+					  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ASSIGNMENT, ":="));
+					  break;
+				  }
+				  else{
+					  reader.reset();
+					  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.COLON, ":"));
+					  break;
+				  }
+			  case '\'':
+				  buffor+=character;
+				  character = (char) reader.read();
+				  buffor+=character;
+				  if(character=='\\'){
+					  character = (char) reader.read();
+					  buffor+=character;
+				  }
+				  character = (char) reader.read();
+				  buffor+=character;
+				  if(character=='\''){
+					  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.CHARACTER, buffor));
+					  break;
+				  }
+				  else {
+					 tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ERROR,buffor+ " ERROR:Niedomkniêty znak."));
+					  break;
+				  }
+			  case '\"':{
+				  buffor+=character;
+					  while(true){
+						  character = (char) reader.read();
+						  buffor+=character;
+						  if(character=='\"'){
+							  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.TEXT, buffor));
+							  break;
+						  }
+						  else if(character=='\n'){
+							  tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.ERROR, buffor+" ERROR:Niedomkniêty cudzys³ów."));
+							  break;
+						  }
+					  }
+					 break;
+				  
+			  }
 			  default:
 				  if(Character.isLetter(character)){
 					  boolean isVariable = true;
@@ -92,10 +209,10 @@ public class PascalScanner {
 					tokens.add(new AbstractMap.SimpleEntry<Token, String>(Token.VARIABLE, buffor));
 					  break;
 				}
-		}
+			}
 				  
-			  }
-			  }
+		}
+	}
 
 }
 }
