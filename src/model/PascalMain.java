@@ -17,13 +17,16 @@ public class PascalMain {
 			   }
 		//Writer writer = new Writer(new FileOutputStream(new File("test/wynik.txt")));
 			Writer writer = new Writer();
-			Parser p = new Parser(new PascalLexer(fr),writer);
+			Scanner scanner = new Scanner(fr);
+			ParserCup p = new ParserCup(scanner, writer);
+			p.parse();
 			System.out.print(writer.getCode().toString());
 			// Parser p = new Parser(new Scanner(new FileInputStream(new
 			// File("test/test.txt"))), writer );
 			// MainWindow w = new MainWindow();
 			//Controller controller = new Controller();
-			System.out.println("dupa");
+
+			System.out.println("\ndupa");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

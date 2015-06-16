@@ -2,6 +2,16 @@
 //src/model/Scanner.lex/lex-comply-jlex=false
 //src/model/Scanner.lex/lex-output=src
 //src/model/Scanner.lex/lex-skip-min=false
+//src/model/parser.cup/cup-compact-red=false
+//src/model/parser.cup/cup-debug=false
+//src/model/parser.cup/cup-expected-conflicts=0
+//src/model/parser.cup/cup-no-positions=false
+//src/model/parser.cup/cup-no-scanner=false
+//src/model/parser.cup/cup-non-terms=false
+//src/model/parser.cup/cup-output=src
+//src/model/parser.cup/cup-parser-class=ParserCup
+//src/model/parser.cup/cup-symbols-class=Sym
+//src/model/parser.cup/cup-symbols-if=true
 //src/model/pascal.cup/cup-compact-red=false
 //src/model/pascal.cup/cup-debug=false
 //src/model/pascal.cup/cup-expected-conflicts=0
