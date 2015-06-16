@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
-import jsyntaxpane.*;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -118,7 +117,7 @@ public class Window {
 		        	  JOptionPane.showMessageDialog(null,  "Nie podano pliku z koñcówk¹ .java","ERROR", JOptionPane.ERROR_MESSAGE);
 		          }
 		          else {
-		        	  DefaultSyntaxKit.initKit();
+		        	//  DefaultSyntaxKit.initKit();
 		        	  file_name=selectedFile.getAbsolutePath();
 		        	  file = selectedFile.getAbsoluteFile();
 		        	  BufferedReader reader = null;

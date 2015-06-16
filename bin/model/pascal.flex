@@ -54,42 +54,42 @@ whitespace      = [ \n\t]
 /**
  * LEXICAL RULES:
  */
-begin           { return newSym(sym.BEGIN); }
-and             { return newSym(sym.AND); }
-array           { return newSym(sym.ARRAY); }
-else            { return newSym(sym.ELSE); }
-end             { return newSym(sym.END); }
-if              { return newSym(sym.IF); }
-of              { return newSym(sym.OF); }
-or              { return newSym(sym.OR); }
-program         { return newSym(sym.PROGRAM); }
-procedure       { return newSym(sym.PROCEDURE); }
-then            { return newSym(sym.THEN); }
-type            { return newSym(sym.TYPE); }
-var             { return newSym(sym.VAR); }
-"*"             { return newSym(sym.MULTIPLY); }
-"+"             { return newSym(sym.ADD); }
-"-"             { return newSym(sym.MINUS); }
-"/"             { return newSym(sym.DIVIDE); }
-";"             { return newSym(sym.SEMICOLON); }
-","             { return newSym(sym.COMMA); }
-"("             { return newSym(sym.LEFT_BRACKET); }
-")"             { return newSym(sym.RIGHT_BRACKET); }
-"["             { return newSym(sym.LEFT_BRACKET2); }
-"]"             { return newSym(sym.RIGHT_BRACKET2); }
-"="             { return newSym(sym.EQUALS); }
-"<"             { return newSym(sym.GREATER_THEN); }
-">"             { return newSym(sym.LESS); }
-"<="            { return newSym(sym.LESS_THEN_OR_EQUALS); }
-">="            { return newSym(sym.GREATER_THEN_OR_EQUALS); }
-"!="            { return newSym(sym.NOT_EQUALS); }
-":"             { return newSym(sym.COLON); }
-":="            { return newSym(sym.ASSINGMENT); }
-"."             { return newSym(sym.DOT); }
-{identifier}    { return newSym(sym.IDENT, yytext()); }
-{integer}       { return newSym(sym.INT, new Integer(yytext())); }
-{real}          { return newSym(sym.REAL, new Double(yytext())); }
-{char}          { return newSym(sym.CHAR, new Character(yytext().charAt(1))); }
+begin           { return Symbol(Sym.BEGIN); }
+and             { return Symbol(Sym.AND); }
+array           { return Symbol(Sym.ARRAY); }
+else            { return Symbol(Sym.ELSE); }
+end             { return Symbol(Sym.END); }
+if              { return Symbol(Sym.IF); }
+of              { return Symbol(Sym.OF); }
+or              { return Symbol(Sym.OR); }
+program         { return Symbol(Sym.PROGRAM); }
+procedure       { return Symbol(Sym.PROCEDURE); }
+then            { return Symbol(Sym.THEN); }
+type            { return Symbol(Sym.TYPE); }
+var             { return Symbol(Sym.VAR); }
+"*"             { return Symbol(Sym.MULTIPLY); }
+"+"             { return Symbol(Sym.ADD); }
+"-"             { return Symbol(Sym.MINUS); }
+"/"             { return Symbol(Sym.DIVIDE); }
+";"             { return Symbol(Sym.SEMICOLON); }
+","             { return Symbol(Sym.COMMA); }
+"("             { return Symbol(Sym.LEFTBRACKET); }
+")"             { return Symbol(Sym.RIGHTBRACKET); }
+"["             { return Symbol(Sym.LEFT_BRACKET2); }
+"]"             { return Symbol(Sym.RIGHT_BRACKET2); }
+"="             { return Symbol(Sym.EQUALS); }
+"<"             { return Symbol(Sym.GREATER_THEN); }
+">"             { return Symbol(Sym.LESS); }
+"<="            { return Symbol(Sym.LESS_THEN_OR_EQUALS); }
+">="            { return Symbol(Sym.GREATER_THEN_OR_EQUALS); }
+"!="            { return Symbol(Sym.NOT_EQUALS); }
+":"             { return Symbol(Sym.COLON); }
+":="            { return Symbol(Sym.ASSINGMENT); }
+"."             { return Symbol(Sym.DOT); }
+{identifier}    { return Symbol(Sym.IDE, yytext()); }
+{integer}       { return Symbol(Sym.INT, new Integer(yytext())); }
+{real}          { return Symbol(Sym.REAL, new Double(yytext())); }
+{char}          { return Symbol(Sym.CHAR, new Character(yytext().charAt(1))); }
 {comment}       { /* For this stand-alone lexer, print out comments. */
                   System.out.println("Recognized comment: " + yytext()); }
 {whitespace}    { /* Ignore whitespace. */ }

@@ -16,4 +16,8 @@
 //src/model/pascal.lex/lex-comply-jlex=false
 //src/model/pascal.lex/lex-output=src
 //src/model/pascal.lex/lex-skip-min=false
+//src/model/skaner.lex/lex-code-method=0
+//src/model/skaner.lex/lex-comply-jlex=false
+//src/model/skaner.lex/lex-output=src
+//src/model/skaner.lex/lex-skip-min=false
 eclipse.preferences.version=1

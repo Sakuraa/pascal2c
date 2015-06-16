@@ -6,6 +6,23 @@ parser code
 {:
 Scanner scanner;
 Writer writer;
+
+public void setScanner(Scanner scanner)
+	{
+		this.scanner = scanner;
+	}
+	
+	public void setWriter(Writer  writer)
+	{
+		this.writer = writer;
+	}
+	
+	public Parser(Scanner scanner,Writer writer){
+		super(scanner);
+		this.scanner = scanner;
+		this.writer = writer;
+	}
+
 public static parser getParser(String pPath) throws Exception {
 	//InputStream is = null;
 	//is = new FileInputStream(pPath);
@@ -35,7 +52,7 @@ terminal Char CHAR;
 terminal Boolean BOOLEAN;
 
 /* Non terminals */
-non terminal Node program, procedure, function, block, var, variables, names, type;
+non terminal String program, procedure, function, block, var, variables, names, type;
 non terminal array,instructions, loop_stat, cond_stat, case, caselist,case_type, expr, expr_alg, stat, atom, rd, wrt, wrt_atom ,list_stat;
 
 precedence nonassoc LESS, LESS_OR_EQUALS, EQUALS, NOT_EQUALS, GREATER, GREATER_OR_EQUALS;
