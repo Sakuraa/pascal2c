@@ -1,0 +1,137 @@
+package model;
+import java_cup.runtime.*;
+import java.io.FileInputStream;
+import java.io.InputStream;
+parser code
+{:
+Scanner scanner;
+Writer writer;
+public static parser getParser(String pPath) throws Exception {
+	//InputStream is = null;
+	//is = new FileInputStream(pPath);
+	FileReader fr = new FileReader(pPath);
+return new parser(new PascalLexer(fr));
+}
+public static void main(String args[]) throws Exception {
+new parser(new PascalLexer(System.in)).parse();
+}
+
+	public Writer getWriter()
+	{
+		return this.writer;
+	}
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal PROGRAM, USES, SEMICOLON, VAR, DOT, PROCEDURE, LEFTBRACKET, RIGHTBRACKET, FUNCTION, COLON, BEGIN, END, COMMA, ARRAY, LEFT_BRACKET2, RIGHT_BRACKET2, WHILE, REPEAT, DO, UNTIL, FOR, ASSIGNMENT, TO, DOWNTO, IF, THEN, ELSE, CASE, OF, EQUALS, GREATER, LESS, LESS_OR_EQUALS, GREATER_OR_EQUALS, NOT_EQUALS, ADD, MINUS, MULTIPLY, DIVIDE, MOD, NOT, WRITE, WRITELN, READ, READLN, READKEY,NIL, OR, AND, ASSINGMENT;
+
+
+/* Terminals with attached values */
+terminal Integer INT;
+terminal String IDE;
+terminal Double REAL;
+terminal String STRING;
+terminal Char CHAR;
+terminal Boolean BOOLEAN;
+
+/* Non terminals */
+non terminal Node program, procedure, function, block, var, variables, names, type;
+non terminal array,instructions, loop_stat, cond_stat, case, caselist,case_type, expr, expr_alg, stat, atom, rd, wrt, wrt_atom ,list_stat;
+
+precedence nonassoc LESS, LESS_OR_EQUALS, EQUALS, NOT_EQUALS, GREATER, GREATER_OR_EQUALS;
+precedence left ADD, MINUS, OR;
+precedence left MULTIPLY, DIVIDE, AND, MOD;
+precedence right NOT;
+precedence right DOT;
+
+
+
+start with program;
+program ::= PROGRAM IDE:i1 USES IDE:i2 SEMICOLON VAR var:v procedure:p function:f block:b DOT {: parser.getWriter().write(v+p+f+b+""); :} ;
+
+procedure::= {: :}| 
+      PROCEDURE IDE:i  LEFTBRACKET variables:vars RIGHTBRACKET SEMICOLON VAR var:v block:b SEMICOLON
+      {: RESULT="void "+i+"("+vars+"){"+v+b+"}"; :};
+
+function::= {: :} | 
+FUNCTION IDE:i LEFTBRACKET variables:vars RIGHTBRACKET COLON type:r SEMICOLON VAR var:v block:b SEMICOLON
+      {: RESULT=r+" "+i+"("+vars+"){"+v+b+"}"; :};
+      
+block::= BEGIN instructions:i END {: RESULT="{"+i+"}"; :};
+
+var::= 		{: :} 
+| variables:vars SEMICOLON var:v {:RESULT=vars+";"+v; :};
+
+variables::= names:n COLON type:t {:RESULT=t+" "+n+";"; :};
+
+names::= 	IDE:i {: RESULT=i; :}
+| IDE:i COMMA names:n {: RESULT=i+","+n; :};
+
+type::=  	INT {: RESULT = "int"; :}
+| REAL {: RESULT = "real"; :}
+| STRING {: RESULT = "char[]"; :}
+| CHAR {: RESULT = "char"; :}
+| array:a {: RESULT=a; :};
+
+array ::= ARRAY LEFT_BRACKET2 INT:i1 DOT DOT INT:i2 RIGHT_BRACKET2 OF type:t {: RESULT=t+"["+i2+"]"; :}; 
+
+instructions::= loop_stat:l {: RESULT=l; :}| cond_stat:c {: RESULT=c; :}| list_stat:l {: RESULT=l; :};
+
+loop_stat::= WHILE expr:e DO stat:s {: RESULT="while("+e+"){"+s+"}"; :}
+| REPEAT stat:s UNTIL expr:e  {: RESULT="do{"+s+"}"+"while("+e+");"; :}
+| FOR IDE:i ASSINGMENT expr_alg:ea1 TO expr_alg:ea2 DO stat:s {: RESULT="for("+i+"="+ea1+";"+i+"<"+ea2+";"+i+"++){"+s+"}"; :} 
+| FOR IDE:i ASSINGMENT expr_alg:e1 DOWNTO expr_alg:e2 DO stat:s
+{: RESULT="for("+i+"="+e1+";"+i+">"+e2+";"+i+"--){"+s+"};"; :};
+
+cond_stat::= IF expr:e THEN stat:s {: RESULT="if("+e+"){"+s+"};"; :}
+| IF expr:e THEN stat:s1 ELSE stat:s2 {: RESULT="if("+e+"){"+s1+"} else{"+s1+"};"; :} 
+| CASE LEFTBRACKET IDE:i RIGHTBRACKET OF caselist:cl END SEMICOLON {: RESULT="switch("+i+"){"+cl+"}"; :};
+
+caselist::=case:c SEMICOLON {:RESULT=c ; :} |case:c1 case:c2 {:RESULT=c1+""+c2 ; :};
+case::= case_type:ct COLON expr:e1 SEMICOLON{: RESULT="case \'"+ct+"\'{"+e1+"}"; :};
+case_type::=CHAR {: RESULT="char"; :}
+|INT {: RESULT="int"; :}
+| BOOLEAN {: RESULT="boolean"; :};
+
+
+expr::= expr_alg:e1 EQUALS expr_alg:e2 {: RESULT=e1+"="+e2; :}
+| expr_alg:e1 GREATER expr_alg:e2 {: RESULT=e1+">"+e2; :}
+| expr_alg:e1 LESS expr_alg:e2 {: RESULT=e1+"<"+e2; :}
+| expr_alg:e1 LESS_OR_EQUALS expr_alg:e2 {: RESULT=e1+"<="+e2; :}
+| expr_alg:e1 GREATER_OR_EQUALS expr_alg:e2 {: RESULT=e1+">="+e2; :}
+| expr_alg:e1 NOT_EQUALS expr_alg:e2 {: RESULT=e1+"!="+e2; :};
+
+expr_alg::= atom:a {: RESULT=a+""; :} 
+| MINUS atom:a {: RESULT="-"+a; :}
+| expr_alg:e ADD atom:a {: RESULT=e+"+"+a; :} 
+| expr_alg:e MINUS atom:a {: RESULT=e+"-"+a; :} 
+| expr_alg:e MULTIPLY atom:a {: RESULT=e+"*"+a; :} 
+| expr_alg:e DIVIDE atom:a {: RESULT=e+"/"+a; :} 
+| expr_alg:e AND atom:a {: RESULT=e+"&"+a; :} 
+| expr_alg:e OR atom:a {: RESULT=e+"|"+a; :} 
+| expr_alg:e MOD atom:a {: RESULT=e+" mod "+a; :} ;
+
+atom::= LEFTBRACKET expr_alg:ea RIGHTBRACKET {: RESULT="("+ea+")"; :}
+| IDE:i {: RESULT=i+""; :}
+| NIL {: RESULT="NULL"; :}
+| INT {: RESULT="int"; :}
+| REAL {: RESULT="real"; :}
+| STRING {: RESULT="char[]"; :}
+| CHAR {: RESULT="char"; :}
+| NOT expr_alg:ea {: RESULT="!"+ea; :};
+
+stat::= IDE:i ASSINGMENT expr:e SEMICOLON {: RESULT=i+"="+e; :}
+| IDE:i ASSINGMENT expr_alg:ea SEMICOLON {: RESULT=i+"="+ea; :}
+| rd:r SEMICOLON {: RESULT=r; :}
+| wrt:w SEMICOLON {: RESULT=w; :}
+| stat:s1 SEMICOLON stat:s2 SEMICOLON {: RESULT = s1+";"+s2+";"; :};
+
+rd::= READ LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%s\","+i+");"; :}
+| READKEY LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT=i+"= getchar();"; :}
+| READLN LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%s\","+i+");"; :};
+
+wrt::=	 WRITE LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+");"; :}
+| WRITELN LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+"); printf(\"\n\");"; :};
+
+wrt_atom::= 	{: :}
+| atom:a COMMA wrt_atom:w {: :};
