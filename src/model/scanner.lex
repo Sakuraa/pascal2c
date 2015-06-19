@@ -53,7 +53,7 @@ rightbracket3   = \}
 nonrightbracket = [^}]
 comment_body    = {nonrightbracket}*
 comment         = {leftbracket3}{comment_body}{rightbracket3}
-whitespace      = [ \n\t]+
+whitespace      = [ \n\t\r]+
 
 
 %%

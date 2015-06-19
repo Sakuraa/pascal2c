@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -26,6 +28,15 @@ import java.nio.charset.Charset;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
+
+
+
+
+
+
+import model.ParserCup;
+import model.Scanner;
+import model.Writer;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -37,8 +48,9 @@ import javax.swing.JEditorPane;
 public class Window {
 
 	private JFrame frame;
-	 String file_name;
-	 File file;
+	 public String file_name;
+	 public File file;
+	 public boolean toSave=false;
 
 	/**
 	 * Launch the application.
@@ -103,6 +115,31 @@ public class Window {
 		final RSyntaxTextArea b= new RSyntaxTextArea();
 		scrollPane_1.setViewportView(b);
 		JButton btnConvert = new JButton("Convert");
+		btnConvert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FileReader fr = null;
+				try {
+					fr = new FileReader(file);
+					Writer writer = new Writer();
+					Scanner scanner = new Scanner(fr);
+					ParserCup p = new ParserCup(scanner, writer);
+					p.parse();
+					b.setText(writer.getCode().toString());
+					toSave=true;
+				} catch (FileNotFoundException e1) {
+					JOptionPane.showMessageDialog(null,  "Plik nie istnieje","ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+				catch(NullPointerException e2){
+					JOptionPane.showMessageDialog(null,  "Nie podano pliku.","ERROR", JOptionPane.ERROR_MESSAGE);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null,  "Blad.","ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+
+
+
+			}
+		});
 		panel_2.add(btnConvert);
 		 a.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_DELPHI);
     	 b.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
@@ -114,7 +151,7 @@ public class Window {
 		          File selectedFile = fileChooser.getSelectedFile();
 		          //System.out.println(selectedFile.getName());
 		          if(!selectedFile.getAbsolutePath().contains(".pas")){
-		        	  JOptionPane.showMessageDialog(null,  "Nie podano pliku z koñcówk¹ .java","ERROR", JOptionPane.ERROR_MESSAGE);
+		        	  JOptionPane.showMessageDialog(null,  "Nie podano pliku z koÃ±cÃ³wkÂ¹ .pas","ERROR", JOptionPane.ERROR_MESSAGE);
 		          }
 		          else {
 		        	//  DefaultSyntaxKit.initKit();
@@ -155,6 +192,40 @@ public class Window {
 				System.exit(0);
 			}
 		});
+		
+		JButton btnSaveOutput = new JButton("Save Output");
+		btnSaveOutput.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FileWriter out = null;		
+					if(toSave==true){
+				
+					    try {
+							out = new FileWriter("output.c");
+							out.write(b.getText());
+							System.out.print(b.getText());
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null,  "Zapisanie pliku nie powiodlo sie.","ERROR", JOptionPane.ERROR_MESSAGE);
+						}
+					    JOptionPane.showMessageDialog(null,  "Plik zostaÅ‚ zapisany w pliku output.c","", JOptionPane.INFORMATION_MESSAGE);
+					    try {
+							out.close();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						}
+					else if(toSave==false)
+						JOptionPane.showMessageDialog(null,  "Puste pole.","ERROR", JOptionPane.ERROR_MESSAGE);
+					
+					
+					//out.close();
+
+				
+
+			}
+		});
+		panel_2.add(btnSaveOutput);
 		panel_2.add(btnQuit);
 		
 
