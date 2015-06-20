@@ -47,7 +47,7 @@ identifier      = {letter}({alphanumeric}|{other_id_char})*
 integer         = {digit}+
 real            = {integer}\.{integer}
 char            = '.'
-string 			= ".*"
+string 			= '.*'
 leftbracket3    = \{
 rightbracket3   = \}
 nonrightbracket = [^}]
@@ -116,10 +116,10 @@ whitespace      = [ \n\t\r]+
 ":="            { return new Symbol(Sym.ASSINGMENT); }
 "."             { return new Symbol(Sym.DOT); }
 {identifier}    { return new Symbol(Sym.IDE, yytext()); }
-{integer}       { return new Symbol(Sym.INT); }
-{real}          { return new Symbol(Sym.REAL); }
-{char}          { return new Symbol(Sym.CHAR); }
-{string}          { return new Symbol(Sym.STRING); }
+{integer}       { return new Symbol(Sym.INT, yytext()); }
+{real}          { return new Symbol(Sym.REAL, yytext()); }
+{char}          { return new Symbol(Sym.CHAR, yytext()); }
+{string}          { return new Symbol(Sym.STRING, yytext()); }
 {comment}       { /* For this stand-alone lexer, print out comments. */
                   System.out.println("Recognized comment: " + yytext()); }
 {whitespace}    { /* Ignore whitespace. */ }

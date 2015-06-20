@@ -1,14 +1,14 @@
 program babelki; 
-uses crt; 
-var tablica: char; 
+uses 
+crt; 
+var 
+tablica: char; 
+a,b,n,m : integer;
+c : char;
 procedure cos(bab:char);
 var tab:char;
 begin
-end;
-
-function cos2(bab:char,cac:char):char;
-var c2:char;
-begin
+tab:=9 ;
 end;
 
 begin 
@@ -20,5 +20,5 @@ end;
 while s<4 do 
 begin
 end;
-{ cos }
+
 end.
