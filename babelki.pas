@@ -6,7 +6,7 @@ var tab:char;
 begin
 end;
 
-function cos2(bab:char):char;
+function cos2(bab:char,cac:char):char;
 var c2:char;
 begin
 end;
@@ -17,8 +17,8 @@ for c:=1 to 3 do
 begin
 end;
 
-{while s<4 do 
+while s<4 do 
 begin
-end;}
+end;
 { cos }
 end.

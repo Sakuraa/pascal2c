@@ -69,8 +69,8 @@ terminal Char CHAR;
 terminal Boolean BOOLEAN;*/
 
 /* Non terminals */
-non terminal String program, procedure, function, block, var, variables, names, type;
-non terminal String array, instructions, loop_stat, cond_stat, case, caselist,case_type, expr, expr_alg, stat, atom, rd, wrt, wrt_atom ,list_stat;
+non terminal String program, procedure, function, block, var, variables, names, type, arg;
+non terminal String array, instructions, loop_stat, cond_stat, case, caselist,case_type, expr, expr_alg, stat, atom, rd, wrt, wrt_atom, list_stat, instr_stat;
 
 precedence nonassoc LESS, LESS_OR_EQUALS, EQUALS, NOT_EQUALS, GREATER, GREATER_OR_EQUALS;
 precedence left ADD, MINUS, OR;
@@ -81,15 +81,15 @@ precedence right DOT;
 
 
 start with program;
-program ::= PROGRAM IDE:i1 SEMICOLON USES IDE:i2 SEMICOLON VAR var:v procedure:p function:f block:b DOT {: parser.getWriter().write(v+p+f+"void main()"+b+""); :} ;
+program ::= PROGRAM IDE:i1 SEMICOLON USES IDE:i2 SEMICOLON VAR var:v procedure:p function:f block:b DOT {: parser.getWriter().write(v+p+f+"void main()"+b+""); :};
 
 procedure::=  {: RESULT =""; :}|
-      PROCEDURE IDE:i  LEFTBRACKET variables:vars RIGHTBRACKET SEMICOLON VAR var:v block:b SEMICOLON
-      {: RESULT="void "+i+"("+vars+"){ \n"+v+b+"} \n"; :};
+      PROCEDURE IDE:i  LEFTBRACKET arg:a RIGHTBRACKET SEMICOLON VAR var:v block:b SEMICOLON
+      {: RESULT="void "+i+"("+a+"){ \n"+v+b+"} \n"; :};
 
 function::=  {: RESULT =""; :}  |
-FUNCTION IDE:i LEFTBRACKET variables:vars RIGHTBRACKET COLON type:r SEMICOLON VAR var:v block:b SEMICOLON
-      {: RESULT=r+" "+i+"("+vars+"){ \n"+v+b+"} \n"; :};
+FUNCTION IDE:i LEFTBRACKET arg:a RIGHTBRACKET COLON type:r SEMICOLON VAR var:v block:b SEMICOLON
+      {: RESULT=r+" "+i+"("+a+"){ \n"+v+b+"} \n"; :};
       
 block::= BEGIN instructions:i END {: RESULT="{ \n"+i+"} \n"; :};
 
@@ -97,6 +97,9 @@ var::=         {: RESULT =""; :}
 | variables:vars SEMICOLON var:v {:RESULT=vars+" "+v; :};
 
 variables::= names:n COLON type:t {:RESULT=t+" "+n+""; :};
+
+arg::= variables:v {: RESULT =v; :}
+| variables:v COMMA arg:a {:RESULT=v+", "+a; :};
 
 names::=     IDE:i {: RESULT=i; :}
 | IDE:i COMMA names:n {: RESULT=i+","+n; :};
@@ -109,7 +112,9 @@ type::=      INT {: RESULT = "int"; :}
 
 array ::= ARRAY LEFT_BRACKET2 INT:i1 DOT DOT INT:i2 RIGHT_BRACKET2 OF type:t {: RESULT=t+"["+i2+"]"; :};
 
-instructions::= {:  RESULT =""; :} | loop_stat:l SEMICOLON {: RESULT=l; :}| cond_stat:c SEMICOLON {: RESULT=c; :}| list_stat:l {: RESULT=l; :};
+instructions ::= {:  RESULT =""; :} | instr_stat:i instructions:is {: RESULT = i+"\n"+is; :};
+
+instr_stat ::=  loop_stat:l SEMICOLON {: RESULT=l; :}| cond_stat:c SEMICOLON {: RESULT=c; :}| list_stat:l {: RESULT=l; :};
 
 loop_stat::= WHILE expr:e DO block:b {: RESULT="while("+e+")"+b+"; \n"; :}
 | REPEAT stat:s UNTIL expr:e  {: RESULT="do{"+s+"}"+"while("+e+");"; :}
@@ -128,7 +133,6 @@ case::= case_type:ct COLON expr:e1 SEMICOLON{: RESULT="case \'"+ct+"\'{"+e1+"} \
 case_type::=CHAR {: RESULT="char"; :}
 |INT {: RESULT="int"; :}
 | BOOLEAN {: RESULT="boolean"; :};
-
 
 expr::= expr_alg:e1 EQUALS expr_alg:e2 {: RESULT=e1+"="+e2; :}
 | expr_alg:e1 GREATER expr_alg:e2 {: RESULT=e1+">"+e2; :}
@@ -156,11 +160,14 @@ atom::= LEFTBRACKET expr_alg:ea RIGHTBRACKET {: RESULT="("+ea+")"; :}
 | CHAR {: RESULT="char"; :}
 | NOT expr_alg:ea {: RESULT="!"+ea; :};
 
+//list_stat::= stat:s list_stat:ls {: RESULT = s+"\n"+ls; :};
+list_stat::=stat:s list_stat:ls {: RESULT = s+"\n"+ls; :};
+
 stat::= IDE:i ASSINGMENT expr:e SEMICOLON {: RESULT=i+"="+e; :}
 | IDE:i ASSINGMENT expr_alg:ea SEMICOLON {: RESULT=i+"="+ea; :}
 | rd:r SEMICOLON {: RESULT=r; :}
-| wrt:w SEMICOLON {: RESULT=w; :}
-| stat:s1 SEMICOLON stat:s2 SEMICOLON {: RESULT = s1+"; \n"+s2+"; \n"; :};
+| wrt:w SEMICOLON {: RESULT=w; :};
+//| stat:s1 SEMICOLON stat:s2 SEMICOLON {: RESULT = s1+"; \n"+s2+"; \n"; :};
 
 rd::= READ LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%s\","+i+");"; :}
 | READKEY LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT=i+"= getchar();"; :}
