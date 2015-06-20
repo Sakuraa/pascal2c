@@ -51,6 +51,7 @@ public class Window {
 	 public String file_name;
 	 public File file;
 	 public boolean toSave=false;
+	 public ParserCup p;
 
 	/**
 	 * Launch the application.
@@ -79,7 +80,7 @@ public class Window {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("Pascal to C Converter");
 		frame.setBounds(100, 100, 894, 529);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
@@ -122,7 +123,7 @@ public class Window {
 					fr = new FileReader(file);
 					Writer writer = new Writer();
 					Scanner scanner = new Scanner(fr);
-					ParserCup p = new ParserCup(scanner, writer);
+					p= new ParserCup(scanner, writer);
 					p.parse();
 					b.setText(writer.getCode().toString());
 					toSave=true;
@@ -200,29 +201,23 @@ public class Window {
 					if(toSave==true){
 				
 					    try {
-							out = new FileWriter("output.c");
+					    	if(p.getWriter().getProgramName()==null){
+					    		JOptionPane.showMessageDialog(null,  "Wystąpił błąd przy parsowaniu, plik nie zostanie zapisany.","ERROR", JOptionPane.ERROR_MESSAGE);
+					    	}else{
+							out = new FileWriter(p.getWriter().getProgramName()+".c");
 							out.write(b.getText());
-							System.out.print(b.getText());
+							 JOptionPane.showMessageDialog(null,  "Plik został zapisany w pliku "+p.getWriter().getProgramName()+".c","", JOptionPane.INFORMATION_MESSAGE);
+								out.close();
+					    	}
+							//System.out.print(b.getText());
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							JOptionPane.showMessageDialog(null,  "Zapisanie pliku nie powiodlo sie.","ERROR", JOptionPane.ERROR_MESSAGE);
 						}
-					    JOptionPane.showMessageDialog(null,  "Plik został zapisany w pliku output.c","", JOptionPane.INFORMATION_MESSAGE);
-					    try {
-							out.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
-						}
-					else if(toSave==false)
+					else
 						JOptionPane.showMessageDialog(null,  "Puste pole.","ERROR", JOptionPane.ERROR_MESSAGE);
 					
-					
-					//out.close();
-
-				
-
 			}
 		});
 		panel_2.add(btnSaveOutput);
