@@ -80,7 +80,7 @@ public class Window {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 666, 390);
+		frame.setBounds(100, 100, 894, 529);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
 		
@@ -92,14 +92,14 @@ public class Window {
 		layeredPane.add(lblPascal);
 		
 		JLabel lblC = new JLabel("C");
-		lblC.setBounds(348, 53, 46, 14);
+		lblC.setBounds(453, 53, 46, 14);
 		layeredPane.add(lblC);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(28, 11, 588, 31);
+		panel_2.setBounds(28, 11, 817, 31);
 		layeredPane.add(panel_2);
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(35, 65, 268, 249);
+		scrollPane.setBounds(35, 65, 400, 400);
 		layeredPane.add(scrollPane);
 		
 		final RSyntaxTextArea a = new RSyntaxTextArea();
@@ -107,7 +107,7 @@ public class Window {
 		JButton btnBrowse = new JButton("Browse");
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(348, 65, 268, 249);
+		scrollPane_1.setBounds(450, 65, 400, 400);
 		layeredPane.add(scrollPane_1);
 		btnBrowse.setHorizontalAlignment(SwingConstants.LEFT);
 		panel_2.add(btnBrowse);
