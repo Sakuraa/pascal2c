@@ -104,6 +104,7 @@ public class Window {
 		layeredPane.add(scrollPane);
 		
 		final RSyntaxTextArea a = new RSyntaxTextArea();
+		a.setEditable(false);
 		scrollPane.setViewportView(a);
 		JButton btnBrowse = new JButton("Browse");
 		
@@ -114,6 +115,7 @@ public class Window {
 		panel_2.add(btnBrowse);
 		
 		final RSyntaxTextArea b= new RSyntaxTextArea();
+		b.setEditable(false);
 		scrollPane_1.setViewportView(b);
 		JButton btnConvert = new JButton("Convert");
 		btnConvert.addActionListener(new ActionListener() {
