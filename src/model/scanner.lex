@@ -90,6 +90,7 @@ whitespace      = [ \n\t\r]+
 "var"           { return new Symbol(Sym.VAR ); }
 "while"         { return new Symbol(Sym.WHILE ); }
 "read"          { return new Symbol(Sym.READ ); }
+"readkey"        { return new Symbol(Sym.READKEY ); }
 "readln"        { return new Symbol(Sym.READLN ); }
 "write"         { return new Symbol(Sym.WRITE ); }
 "writeln"       { return new Symbol(Sym.WRITELN ); }
@@ -111,7 +112,7 @@ whitespace      = [ \n\t\r]+
 ">"             { return new Symbol(Sym.LESS); }
 "<="            { return new Symbol(Sym.LESS_OR_EQUALS); }
 ">="            { return new Symbol(Sym.GREATER_OR_EQUALS); }
-"!="            { return new Symbol(Sym.NOT_EQUALS); }
+"<>"            { return new Symbol(Sym.NOT_EQUALS); }
 ":"             { return new Symbol(Sym.COLON); }
 ":="            { return new Symbol(Sym.ASSINGMENT); }
 "."             { return new Symbol(Sym.DOT); }
@@ -119,7 +120,7 @@ whitespace      = [ \n\t\r]+
 {integer}       { return new Symbol(Sym.INT, yytext()); }
 {real}          { return new Symbol(Sym.REAL, yytext()); }
 {char}          { return new Symbol(Sym.CHAR, yytext()); }
-{string}          { return new Symbol(Sym.STRING, yytext()); }
+{string}        { return new Symbol(Sym.STRING, yytext()); }
 {comment}       { /* For this stand-alone lexer, print out comments. */
                   System.out.println("Recognized comment: " + yytext()); }
 {whitespace}    { /* Ignore whitespace. */ }

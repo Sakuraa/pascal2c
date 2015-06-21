@@ -28,12 +28,6 @@ import java.nio.charset.Charset;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
-
-
-
-
-
-
 import model.ParserCup;
 import model.Scanner;
 import model.Writer;

@@ -57,17 +57,9 @@ init with    {: //scanner.init(); :};
 scan with    {: return scanner.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
-terminal String PROGRAM, USES, SEMICOLON, VAR, DOT, PROCEDURE, LEFTBRACKET, RIGHTBRACKET, FUNCTION, COLON, BEGIN, END, COMMA, ARRAY, LEFT_BRACKET2, RIGHT_BRACKET2, WHILE, REPEAT, DO, UNTIL, FOR, ASSIGNMENT, TO, DOWNTO, IF, THEN, ELSE, CASE, OF, EQUALS, GREATER, LESS, LESS_OR_EQUALS, GREATER_OR_EQUALS, NOT_EQUALS, ADD, MINUS, MULTIPLY, DIVIDE, MOD, NOT, WRITE, WRITELN, READ, READLN, READKEY,NIL, OR, AND, ASSINGMENT;
-terminal String INT, IDE, REAL, STRING, CHAR, BOOLEAN, COMMENT;
-terminal Integer INT_CONST;
+terminal String PROGRAM, USES, SEMICOLON, VAR, DOT, PROCEDURE, LEFTBRACKET, RIGHTBRACKET, FUNCTION, COLON, BEGIN, END, COMMA, ARRAY, LEFT_BRACKET2, RIGHT_BRACKET2, WHILE, REPEAT, DO, UNTIL, FOR, TO, DOWNTO, IF, THEN, ELSE, CASE, OF, EQUALS, GREATER, LESS, LESS_OR_EQUALS, GREATER_OR_EQUALS, NOT_EQUALS, ADD, MINUS, MULTIPLY, DIVIDE, MOD, NOT, WRITE, WRITELN, READ, READLN, READKEY,NIL, OR, AND, ASSINGMENT;
+terminal String INT, IDE, REAL, STRING, CHAR;
 
-/* Terminals with attached values */
-/* terminal Integer INT;
-terminal String IDE;
-terminal Double REAL;
-terminal String STRING;
-terminal Char CHAR;
-terminal Boolean BOOLEAN;*/
 
 /* Non terminals */
 non terminal String program, procedure, function, block, var, variables, names, type, arg;
@@ -82,7 +74,7 @@ precedence right DOT;
 
 
 start with program;
-program ::= PROGRAM IDE:i1 SEMICOLON USES IDE:i2 SEMICOLON VAR var:v procedure:p function:f block:b DOT {: parser.getWriter().setProgramName(i1); parser.getWriter().write(v+p+f+"void main(){"+b+"}"); :};
+program ::= PROGRAM IDE:i1 SEMICOLON USES IDE:i2 SEMICOLON VAR var:v procedure:p function:f block:b DOT {: parser.getWriter().setProgramName(i1); parser.getWriter().write("#include <stdio.h>\r\n\r\n"+v+"\r\n"+p+f+"void main(){"+b+"}"); :};
 
 procedure::=  {: RESULT =""; :}|
       PROCEDURE IDE:i  LEFTBRACKET arg:a RIGHTBRACKET SEMICOLON VAR var:v block:b SEMICOLON
@@ -90,9 +82,9 @@ procedure::=  {: RESULT =""; :}|
 
 function::=  {: RESULT =""; :}  |
 FUNCTION IDE:i LEFTBRACKET arg:a RIGHTBRACKET COLON type:r SEMICOLON VAR var:v block:b SEMICOLON
-      {: RESULT=r+" "+i+"("+a+"){ \r\n"+v+b+"} \r\n"; :};
+      {: RESULT=r+" "+i+"("+a+"){ \r\n"+v+b+ "return null;\r\n} \r\n"; :};
       
-block::= BEGIN instructions:i END {: RESULT="\r\n"+i+" \r\n"; :};
+block::= BEGIN instructions:i END {: RESULT="\r\n"+i+"\r\n"; :};
 
 var::= {: RESULT =""; :}
 | variables:vars SEMICOLON var:v {:RESULT=vars+";\r\n"+v; :};
@@ -113,26 +105,36 @@ type::=      INT {: RESULT = "int"; :}
 
 array ::= ARRAY LEFT_BRACKET2 INT:i1 DOT DOT INT:i2 RIGHT_BRACKET2 OF type:t {: RESULT=t+"["+i2+"]"; :};
 
-instructions ::= {:  RESULT =""; :} | instr_stat:i instructions:is {: RESULT = i+"\r\n"+is; :};
+instructions ::= instr_stat:i {: RESULT = i+""; :}
+| instr_stat:i instructions:is {: RESULT = i+"\r\n"+is; :};
 
-instr_stat ::=  loop_stat:l SEMICOLON {: RESULT=l; :}| cond_stat:c SEMICOLON {: RESULT=c; :}| list_stat:l {: RESULT=l; :};
+instr_stat ::=  loop_stat:l SEMICOLON {: RESULT=l; :}
+| cond_stat:c SEMICOLON {: RESULT=c; :}
+| list_stat:l SEMICOLON {: RESULT=l; :};
 
 loop_stat::= WHILE expr:e DO block:b {: RESULT="while("+e+"){"+b+"}; \r\n"; :}
-| REPEAT stat:s UNTIL expr:e  {: RESULT="do{"+s+"}"+"while("+e+");"; :}
+| REPEAT instructions:s UNTIL expr:e  {: RESULT="do{\r\n"+s+"}"+" while("+e+");"; :}
 | FOR IDE:i ASSINGMENT expr_alg:ea1 TO expr_alg:ea2 DO block:b {: RESULT="for("+i+"="+ea1+";"+i+"<"+ea2+";"+i+"++){"+b+"}; \r\n"; :}
-| FOR IDE:i ASSINGMENT expr_alg:e1 DOWNTO expr_alg:e2 DO block:b {: RESULT="for("+i+"="+e1+";"+i+">"+e2+";"+i+"--){"+b+"}; \r\n"; :};
+| FOR IDE:i ASSINGMENT expr_alg:ea1 DOWNTO expr_alg:ea2 DO block:b {: RESULT="for("+i+"="+ea1+";"+i+">"+ea2+";"+i+"--){"+b+"}; \r\n"; :};
 
 cond_stat::= IF expr:e THEN block:b {: RESULT="if("+e+"){"+b+"}; \r\n"; :}
 | IF expr:e THEN block:b1 ELSE block:b2 {: RESULT="if("+e+"){"+b1+"} else{"+b2+"}; \r\n"; :}
-| CASE LEFTBRACKET IDE:i RIGHTBRACKET OF caselist:cl END {: RESULT="switch("+i+"){"+cl+"} \r\n"; :};
+| CASE IDE:i OF caselist:cl END{: RESULT="switch("+i+")\r\n{\r\n"+cl+"} \r\n"; :};
 
-caselist::= {: :} |case:c1 caselist:c2 {:RESULT=c1+""+c2 ; :};
+list_stat::= {: RESULT =""; :}
+| stat:s list_stat:ls {: RESULT = s+"\r\n"+ls; :};
 
-case::= case_type:ct COLON expr:e1 SEMICOLON{: RESULT="case \'"+ct+"\'{"+e1+"} \r\n"; :};
+stat::= IDE:i ASSINGMENT expr_alg:ea {: RESULT=i+"="+ea+";"; :}
+| rd:r {: RESULT=r; :}
+| wrt:w {: RESULT=w; :};
 
-case_type::=CHAR {: RESULT="char"; :}
-|INT {: RESULT="int"; :}
-| BOOLEAN {: RESULT="boolean"; :};
+caselist::= case:c {: RESULT =c+""; :} 
+|case:c1 SEMICOLON caselist:c2 {: RESULT=c1+""+c2; :};
+
+case::= case_type:c COLON stat:e1 {: RESULT="case "+c+"{"+e1+"} \r\n"; :};
+
+case_type::= CHAR:c {: RESULT=c+""; :}
+| INT:i {: RESULT=i+""; :};
 
 expr::= expr_alg:e1 EQUALS expr_alg:e2 {: RESULT=e1+"="+e2; :}
 | expr_alg:e1 GREATER expr_alg:e2 {: RESULT=e1+">"+e2; :}
@@ -156,23 +158,15 @@ atom::= LEFTBRACKET expr_alg:ea RIGHTBRACKET {: RESULT="("+ea+")"; :}
 | NIL {: RESULT="NULL"; :}
 | INT:i {: RESULT=i+""; :}
 | REAL:r {: RESULT=r+""; :}
-| STRING:s {: RESULT="\""+s+"\""; :}
-| CHAR:c {: RESULT="\'"+c+"\'"; :}
+| STRING:s {: RESULT=s.replace("\'","\""); :}
+| CHAR:c {: RESULT=c+""; :}
 | NOT expr_alg:ea {: RESULT="!"+ea; :};
 
-list_stat::=stat:s list_stat:ls {: RESULT = s+"\r\n"+ls; :};
+rd::= READ LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%c\", &"+i+");"; :}
+| IDE:i ASSINGMENT READKEY{: RESULT=i+"=getchar();"; :}
+| READLN LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%c\", &"+i+");"; :};
 
-stat::= IDE:i ASSINGMENT expr_alg:ea SEMICOLON {: RESULT=i+"="+ea; :}
-| rd:r SEMICOLON {: RESULT=r; :}
-| wrt:w SEMICOLON {: RESULT=w; :};
-//| stat:s1 SEMICOLON stat:s2 SEMICOLON {: RESULT = s1+"; \r\n"+s2+"; \r\n"; :};
+wrt::= WRITE LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+");"; :}
+| WRITELN LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+"); \r\nprintf(\"\\n\");"; :};
 
-rd::= READ LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%s\","+i+");"; :}
-| READKEY LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT=i+"= getchar();"; :}
-| READLN LEFTBRACKET IDE:i RIGHTBRACKET {: RESULT="scanf(\"%s\","+i+");"; :};
-
-wrt::=     WRITE LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+");"; :}
-| WRITELN LEFTBRACKET wrt_atom:w RIGHTBRACKET {: RESULT="printf("+w+"); printf(\"\r\n\");"; :};
-
-wrt_atom::=     {: :}
-| atom:a COMMA wrt_atom:w {: :};
+wrt_atom::= STRING:s {: RESULT=s.replace("\'","\""); :};
