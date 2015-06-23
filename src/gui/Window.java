@@ -124,13 +124,13 @@ public class Window {
 					b.setText(writer.getCode().toString());
 					toSave=true;
 				} catch (FileNotFoundException e1) {
-					JOptionPane.showMessageDialog(null,  "Plik nie istnieje","ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null,  "The file doesn't exist.","ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 				catch(NullPointerException e2){
-					JOptionPane.showMessageDialog(null,  "Nie podano pliku.","ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null,  "You didn't browse the file.","ERROR", JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					JOptionPane.showMessageDialog(null,  "Blad.","ERROR", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null,  "Error.","ERROR", JOptionPane.ERROR_MESSAGE);
 				}
 
 
@@ -147,8 +147,8 @@ public class Window {
 		        if (returnValue == JFileChooser.APPROVE_OPTION) {
 		          File selectedFile = fileChooser.getSelectedFile();
 		          //System.out.println(selectedFile.getName());
-		          if(!selectedFile.getAbsolutePath().contains(".pas")){
-		        	  JOptionPane.showMessageDialog(null,  "Nie podano pliku z koñcówk¹ .pas","ERROR", JOptionPane.ERROR_MESSAGE);
+		          if(!selectedFile.getAbsolutePath().contains(".pas") && !selectedFile.getAbsolutePath().contains(".PAS")){
+		        	  JOptionPane.showMessageDialog(null,  "The file extension must be .pas","ERROR", JOptionPane.ERROR_MESSAGE);
 		          }
 		          else {
 		        	//  DefaultSyntaxKit.initKit();
@@ -198,21 +198,21 @@ public class Window {
 				
 					    try {
 					    	if(p.getWriter().getProgramName()==null){
-					    		JOptionPane.showMessageDialog(null,  "Wystąpił błąd przy parsowaniu, plik nie zostanie zapisany.","ERROR", JOptionPane.ERROR_MESSAGE);
+					    		JOptionPane.showMessageDialog(null,  "Error during parse, the file won't be saved.","ERROR", JOptionPane.ERROR_MESSAGE);
 					    	}else{
 							out = new FileWriter(p.getWriter().getProgramName()+".c");
 							out.write(b.getText());
-							 JOptionPane.showMessageDialog(null,  "Plik został zapisany w pliku "+p.getWriter().getProgramName()+".c","", JOptionPane.INFORMATION_MESSAGE);
+							 JOptionPane.showMessageDialog(null,  "Program is saved in file: "+p.getWriter().getProgramName()+".c","", JOptionPane.INFORMATION_MESSAGE);
 								out.close();
 					    	}
 							//System.out.print(b.getText());
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
-							JOptionPane.showMessageDialog(null,  "Zapisanie pliku nie powiodlo sie.","ERROR", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null,  "Error while saving file.","ERROR", JOptionPane.ERROR_MESSAGE);
 						}
 						}
 					else
-						JOptionPane.showMessageDialog(null,  "Puste pole.","ERROR", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null,  "Empty field.","ERROR", JOptionPane.ERROR_MESSAGE);
 					
 			}
 		});
